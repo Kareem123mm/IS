@@ -1,0 +1,8 @@
+StartTime,EndTime,course_id,course_name,instructor_name,room
+10:45 AM,12:15 PM,AID422,Natural Language Processing,Eng. Heba Abdelkader,L42
+12:30 PM,2:00 PM,PHY113,Physics 1,Dr. Adel Fathy,L26
+2:15 PM,3:45 PM,LRA402,Japanese Language (2),Dr. Kenji Tanaka,R114
+2:15 PM,3:45 PM,AID322,Data Mining,Dr. Nadia Fawzy,L28
+9:00 AM,10:30 AM,LRA208,Safety and Risk Management,Prof. Mohamed Hassan,R107
+9:00 AM,10:30 AM,LRA201,Introduction to Economics and Sustainable Development,Prof. Adel Al-senn,R110
+9:00 AM,10:30 AM,LRA306,Natural Resources and Sustainability,Prof. Said Sadik,R106

@@ -1,0 +1,10 @@
+StartTime,EndTime,course_id,course_name,instructor_name,room
+10:45 AM,12:15 PM,AID413,Data Security,Dr. Ahmed Arafa,L38
+10:45 AM,12:15 PM,AID325,BlockChain & Distributed Ledgers,Eng. Nada Essam,L41
+12:30 PM,2:00 PM,LRA104,Music and Technology,Prof. Adel Al-senn,R101
+12:30 PM,2:00 PM,CHM113,Chemistry (1),Mohamad Ayad,R105
+12:30 PM,2:00 PM,AID411,BIG Data Analytics & Visualization,Prof. Marghany Hassan,L24
+2:15 PM,3:45 PM,ACM323,Applied Numerical Methods,Dr. Ali Kandil,R101
+9:00 AM,10:30 AM,MTH212,Probability and Statistics,Dr. Karim Hamed,R103
+9:00 AM,10:30 AM,PHY123,Physics 2,Dr. Adel Fathy,L15
+9:00 AM,10:30 AM,AID427,New Trends in Data Science,Dr. Ahmed Arafa,L32

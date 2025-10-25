@@ -1,0 +1,41 @@
+instructor_name,course_id,course_name,Day,StartTime,EndTime,room
+Dr. Adel Fathy,PHY123,Physics 2,Sunday,9:00 AM,10:30 AM,L15
+Dr. Adel Fathy,PHY113,Physics 1,Thursday,12:30 PM,2:00 PM,L26
+Dr. Ahmed Arafa,AID413,Data Security,Sunday,10:45 AM,12:15 PM,L38
+Dr. Ahmed Arafa,AID427,New Trends in Data Science,Sunday,9:00 AM,10:30 AM,L32
+Dr. Ahmed Bayumi,AID412,Introduction to Neural network,Monday,10:45 AM,12:15 PM,R105
+Dr. Ahmed Bayumi,AID428,New Trends in AI,Monday,12:30 PM,2:00 PM,L6
+Dr. Ali Kandil,MTH121,Mathematics (2) (Calculus + Linear Algebra),Monday,10:45 AM,12:15 PM,L6
+Dr. Ali Kandil,ACM323,Applied Numerical Methods,Sunday,2:15 PM,3:45 PM,R101
+Dr. Amal Gomaa,LRA410,Fundamentals of Communication,Monday,9:00 AM,10:30 AM,R102
+Dr. Amal Gomaa,LRA103,Fine Arts Appreciation-Drawing and Paintings,Wednesday,12:30 PM,2:00 PM,R108
+Dr. Ayman Arafa,MTH111,Mathematics (1) ( Calculus + Linear Algebra),Monday,2:15 PM,3:45 PM,R106
+Dr. Ayman Arafa,ACM215,Ordinary Differential Equations,Monday,9:00 AM,10:30 AM,L12
+Dr. Haruto Ito,LRA404,Japanese Language (4),Wednesday,9:00 AM,10:30 AM,R107
+Dr. Karim Hamed,MTH212,Probability and Statistics,Sunday,9:00 AM,10:30 AM,R103
+Dr. Kenji Tanaka,LRA402,Japanese Language (2),Thursday,2:15 PM,3:45 PM,R114
+Dr. Kenji Tanaka,LRA401,Japanese Language (1),Tuesday,12:30 PM,2:00 PM,R105
+Dr. Kenji Tanaka,LRA403,Japanese Language (3),Wednesday,9:00 AM,10:30 AM,R106
+Dr. Maali Fouad,LRA405,Key Skills Seminar (1),Wednesday,9:00 AM,10:30 AM,R111
+Dr. Mohamed Akhames,AID421,Computer Vision,Monday,9:00 AM,10:30 AM,L8
+Dr. Mohamed El-khateeb,LRA203,Entrepreneurship and Innovation,Monday,2:15 PM,3:45 PM,R109
+Dr. Mohamed El-khateeb,LRA105,Theater and Drama,Tuesday,10:45 AM,12:15 PM,R112
+Dr. Nadia Fawzy,AID322,Data Mining,Thursday,2:15 PM,3:45 PM,L28
+Dr. Sherine Elmotasem,LRA101,Japanese Culture,Wednesday,2:15 PM,3:45 PM,R110
+Dr. Yassen,AID324,Image Processing,Tuesday,10:45 AM,12:15 PM,L10
+Eng. Fatma Elsayed,AID417,Advanced Data Mining,Wednesday,10:45 AM,12:15 PM,R112
+Eng. Heba Abdelkader,AID422,Natural Language Processing,Thursday,10:45 AM,12:15 PM,L42
+Eng. Menna Hamdi,AID426,Robotics,Wednesday,9:00 AM,10:30 AM,L16
+Eng. Menna Magdy,AID323,Parallel & Distributed Computing,Wednesday,2:15 PM,3:45 PM,L18
+Eng. Nada Essam,AID325,BlockChain & Distributed Ledgers,Sunday,10:45 AM,12:15 PM,L41
+Eng. Nada Hamdy,CSE312,Discrete Mathematics,Wednesday,10:45 AM,12:15 PM,R101
+Eng. Salma Alashry,AID321,Machine Learning,Tuesday,2:15 PM,3:45 PM,R106
+Eng. Tarek Salah,AID311,Mathematics of Data Science,Wednesday,10:45 AM,12:15 PM,L30
+Mohamad Ayad,CHM113,Chemistry (1),Sunday,12:30 PM,2:00 PM,R105
+Prof. Adel Al-senn,LRA104,Music and Technology,Sunday,12:30 PM,2:00 PM,R101
+Prof. Adel Al-senn,LRA201,Introduction to Economics and Sustainable Development,Thursday,9:00 AM,10:30 AM,R110
+Prof. Marghany Hassan,AID411,BIG Data Analytics & Visualization,Sunday,12:30 PM,2:00 PM,L24
+Prof. Mohamed Hassan,LRA208,Safety and Risk Management,Thursday,9:00 AM,10:30 AM,R107
+Prof. Mohamed Hassan,LRA409,Research Methods,Tuesday,2:15 PM,3:45 PM,R114
+Prof. Said Sadik,LRA306,Natural Resources and Sustainability,Thursday,9:00 AM,10:30 AM,R106
+Prof. Said Sadik,LRA206,Sociology of work,Wednesday,12:30 PM,2:00 PM,R102
