@@ -20,15 +20,21 @@ document.addEventListener('DOMContentLoaded', async () => {
     initializeDataTabs();
     initializeForms();
     
-    // Load data in proper sequence
+    // Check data status first
     await checkDataStatus();
-    await loadDataSummary();
-    await loadAllData();
     
-    // Update status card after data is loaded
-    setTimeout(() => {
+    // Only load data if already uploaded
+    if (dataLoaded) {
+        await loadDataSummary();
+        await loadAllData();
+        setTimeout(() => {
+            updateDataStatusCard();
+        }, 500);
+    } else {
+        // Show upload prompt
+        updateUIBasedOnDataStatus();
         updateDataStatusCard();
-    }, 500);
+    }
 });
 
 // Check if data is loaded
@@ -197,6 +203,15 @@ function displayResults(data) {
 
 async function loadDataSummary() {
     try {
+        // If no data loaded, set counts to 0
+        if (!dataLoaded) {
+            document.getElementById('courses-count').textContent = '0';
+            document.getElementById('instructors-count').textContent = '0';
+            document.getElementById('rooms-count').textContent = '0';
+            document.getElementById('timeslots-count').textContent = '0';
+            return;
+        }
+        
         const response = await fetch('/api/data/summary');
         const data = await response.json();
         

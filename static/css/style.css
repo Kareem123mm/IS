@@ -1636,6 +1636,131 @@ body {
     }
 }
 
+/* ============================================================================
+   UPLOAD REQUIRED SECTION
+============================================================================ */
+.upload-section {
+    margin-top: 2rem;
+}
+
+.upload-required-card {
+    text-align: center;
+    padding: 3rem 2rem;
+    background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
+    border: 2px dashed rgba(102, 126, 234, 0.3);
+    border-radius: 1rem;
+    animation: pulse-border 2s ease-in-out infinite;
+}
+
+@keyframes pulse-border {
+    0%, 100% {
+        border-color: rgba(102, 126, 234, 0.3);
+    }
+    50% {
+        border-color: rgba(102, 126, 234, 0.6);
+    }
+}
+
+.upload-icon {
+    font-size: 4rem;
+    color: var(--primary);
+    margin-bottom: 1rem;
+    animation: float 3s ease-in-out infinite;
+}
+
+@keyframes float {
+    0%, 100% {
+        transform: translateY(0px);
+    }
+    50% {
+        transform: translateY(-10px);
+    }
+}
+
+.upload-required-card h3 {
+    font-size: 1.75rem;
+    margin-bottom: 1rem;
+    color: var(--text-primary);
+}
+
+.upload-required-card .info-text {
+    font-size: 1.1rem;
+    color: var(--text-secondary);
+    margin-bottom: 2rem;
+}
+
+.upload-requirements {
+    background: var(--bg-secondary);
+    border-radius: 0.75rem;
+    padding: 1.5rem;
+    margin: 2rem auto;
+    max-width: 600px;
+    text-align: left;
+}
+
+.upload-requirements h4 {
+    font-size: 1.1rem;
+    margin-bottom: 1rem;
+    color: var(--primary);
+    text-align: center;
+}
+
+.upload-requirements ul {
+    list-style: none;
+}
+
+.upload-requirements li {
+    padding: 0.75rem;
+    margin-bottom: 0.5rem;
+    background: var(--bg-tertiary);
+    border-radius: 0.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.upload-requirements li i {
+    color: var(--primary);
+    font-size: 1.25rem;
+}
+
+.upload-action {
+    margin: 2rem 0;
+}
+
+.upload-info {
+    margin-top: 2rem;
+    padding: 1rem;
+    background: rgba(96, 165, 250, 0.1);
+    border-radius: 0.5rem;
+    border-left: 4px solid var(--info);
+}
+
+.upload-info p {
+    color: var(--text-secondary);
+    font-size: 0.95rem;
+    margin: 0;
+}
+
+.upload-info i {
+    color: var(--info);
+    margin-right: 0.5rem;
+}
+
+@media (max-width: 768px) {
+    .upload-required-card {
+        padding: 2rem 1rem;
+    }
+    
+    .upload-icon {
+        font-size: 3rem;
+    }
+    
+    .upload-required-card h3 {
+        font-size: 1.5rem;
+    }
+}
+
 @media (prefers-reduced-motion: reduce) {
     *,
     *::before,
@@ -1645,3 +1770,4 @@ body {
         transition-duration: 0.01ms !important;
     }
 }
+

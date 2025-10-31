@@ -87,8 +87,39 @@
                     </div>
                 </div>
 
-                <!-- Generation Form -->
-                <div class="generation-section">
+                <!-- Upload Section (shown when no data is loaded) -->
+                <div class="upload-section" style="display: block;">
+                    <div class="section-card upload-required-card">
+                        <div class="upload-icon">
+                            <i class="fas fa-cloud-upload-alt"></i>
+                        </div>
+                        <h3>📁 Upload CSV Files to Get Started</h3>
+                        <p class="info-text">Please upload all required CSV files to begin using the timetable generator</p>
+                        
+                        <div class="upload-requirements">
+                            <h4>Required Files:</h4>
+                            <ul>
+                                <li><i class="fas fa-file-csv"></i> <strong>Courses.csv</strong> - List of all courses</li>
+                                <li><i class="fas fa-file-csv"></i> <strong>instructors.csv</strong> - List of all instructors</li>
+                                <li><i class="fas fa-file-csv"></i> <strong>Rooms.csv</strong> - List of all rooms</li>
+                                <li><i class="fas fa-file-csv"></i> <strong>TimeSlots.csv</strong> - Available time slots</li>
+                            </ul>
+                        </div>
+
+                        <div class="upload-action">
+                            <button class="btn btn-primary btn-large" onclick="showUploadModal()">
+                                <i class="fas fa-upload"></i> Upload CSV Files
+                            </button>
+                        </div>
+
+                        <div class="upload-info">
+                            <p><i class="fas fa-info-circle"></i> <strong>Note:</strong> All four CSV files must be uploaded to proceed with timetable generation</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Generation Form (shown after data is loaded) -->
+                <div class="generation-section" style="display: none;">
                     <div class="section-card">
                         <h3><i class="fas fa-cogs"></i> Generate Complete Timetable</h3>
                         <p class="info-text">This will automatically schedule ALL courses in the dataset across all available time slots (Sunday-Thursday, 9:00 AM - 3:45 PM)</p>

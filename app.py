@@ -37,29 +37,16 @@ def allowed_file(filename):
     """Check if file extension is allowed"""
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
-# Load data on startup (optional - will be empty until user uploads)
+# DON'T load data on startup - require user to upload files first
 def initialize_data():
-    """Load data from CSV files if they exist"""
+    """Load data from CSV files if they exist (DISABLED - require upload)"""
     global data_loaded
-    try:
-        # Check if CSV files exist
-        if all(os.path.exists(f) for f in ['Courses.csv', 'instructors.csv', 'Rooms.csv', 'TimeSlots.csv']):
-            data_loader.load_all_data('Courses.csv', 'instructors.csv', 'Rooms.csv', 'TimeSlots.csv')
-            data_loaded = True
-            print("✅ Default data loaded successfully!")
-            return True
-        else:
-            data_loaded = False
-            print("⚠️ No default data found. Please upload CSV files to begin.")
-            return False
-    except Exception as e:
-        data_loaded = False
-        print(f"⚠️ No default data loaded: {e}")
-        print("Please upload CSV files to begin.")
-        return False
+    data_loaded = False
+    print("⚠️ Auto-load disabled. Please upload CSV files to begin.")
+    return False
 
-# Try to initialize data when app starts (optional)
-initialize_data()
+# Don't auto-load data - user must upload files first
+# initialize_data()  # COMMENTED OUT - require manual upload
 
 # ============================================================================
 # API ROUTES
