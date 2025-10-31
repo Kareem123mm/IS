@@ -1,9 +1,0 @@
-StartTime,EndTime,course_id,course_name,instructor_name,room
-10:45 AM,12:15 PM,MTH121,Mathematics (2) (Calculus + Linear Algebra),Dr. Ali Kandil,L6
-10:45 AM,12:15 PM,AID412,Introduction to Neural network,Dr. Ahmed Bayumi,R105
-12:30 PM,2:00 PM,AID428,New Trends in AI,Dr. Ahmed Bayumi,L6
-2:15 PM,3:45 PM,LRA203,Entrepreneurship and Innovation,Dr. Mohamed El-khateeb,R109
-2:15 PM,3:45 PM,MTH111,Mathematics (1) ( Calculus + Linear Algebra),Dr. Ayman Arafa,R106
-9:00 AM,10:30 AM,LRA410,Fundamentals of Communication,Dr. Amal Gomaa,R102
-9:00 AM,10:30 AM,ACM215,Ordinary Differential Equations,Dr. Ayman Arafa,L12
-9:00 AM,10:30 AM,AID421,Computer Vision,Dr. Mohamed Akhames,L8
