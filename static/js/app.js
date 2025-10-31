@@ -12,6 +12,29 @@ let allData = {
 };
 
 // ============================================================================
+// HELPER FUNCTIONS
+// ============================================================================
+
+// Fetch with cache busting
+async function fetchWithCacheBust(url, options = {}) {
+    const cacheBustUrl = url.includes('?') 
+        ? `${url}&_t=${Date.now()}` 
+        : `${url}?_t=${Date.now()}`;
+    
+    const defaultOptions = {
+        headers: {
+            'Cache-Control': 'no-cache, no-store, must-revalidate',
+            'Pragma': 'no-cache',
+            'Expires': '0',
+            ...options.headers
+        },
+        ...options
+    };
+    
+    return fetch(cacheBustUrl, defaultOptions);
+}
+
+// ============================================================================
 // INITIALIZATION
 // ============================================================================
 
@@ -19,6 +42,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     initializeTabs();
     initializeDataTabs();
     initializeForms();
+    initializeRefreshHandlers();
     
     // Check data status first
     await checkDataStatus();
@@ -37,10 +61,135 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 });
 
+// Initialize refresh handlers
+function initializeRefreshHandlers() {
+    // Add keyboard shortcut: Ctrl+Shift+R for force refresh
+    document.addEventListener('keydown', (e) => {
+        if (e.ctrlKey && e.shiftKey && e.key === 'R') {
+            e.preventDefault();
+            forceRefreshPage();
+        }
+    });
+    
+    // Detect when user returns to tab (refresh if stale)
+    document.addEventListener('visibilitychange', async () => {
+        if (!document.hidden && dataLoaded) {
+            const lastRefresh = parseInt(sessionStorage.getItem('lastRefresh') || '0');
+            const now = Date.now();
+            // Auto-refresh if more than 5 minutes since last refresh
+            if (now - lastRefresh > 5 * 60 * 1000) {
+                console.log('🔄 Auto-refreshing stale data...');
+                await softRefresh();
+            }
+        }
+    });
+}
+
+// Soft refresh (just data, no page reload)
+async function softRefresh() {
+    try {
+        await checkDataStatus();
+        if (dataLoaded) {
+            await loadDataSummary();
+            await loadAllData();
+            updateDataStatusCard();
+            sessionStorage.setItem('lastRefresh', Date.now().toString());
+            console.log('✅ Soft refresh complete');
+        }
+    } catch (error) {
+        console.error('Soft refresh failed:', error);
+    }
+}
+
+// Force refresh entire page with cache clear
+async function forceRefreshPage() {
+    const overlay = createRefreshOverlay();
+    document.body.appendChild(overlay);
+    
+    try {
+        updateRefreshProgress(overlay, 10, '🧹 Clearing all caches...');
+        
+        // Clear all caches thoroughly
+        await clearBrowserCache();
+        
+        // Clear localStorage except essential items
+        const preserveKeys = ['theme', 'language'];
+        const localStorageBackup = {};
+        preserveKeys.forEach(key => {
+            if (localStorage.getItem(key)) {
+                localStorageBackup[key] = localStorage.getItem(key);
+            }
+        });
+        localStorage.clear();
+        Object.keys(localStorageBackup).forEach(key => {
+            localStorage.setItem(key, localStorageBackup[key]);
+        });
+        
+        await sleep(500);
+        
+        updateRefreshProgress(overlay, 40, '� Clearing session data...');
+        sessionStorage.clear();
+        await sleep(300);
+        
+        updateRefreshProgress(overlay, 60, '🔄 Preparing reload...');
+        await sleep(300);
+        
+        updateRefreshProgress(overlay, 80, '✨ Almost done...');
+        await sleep(300);
+        
+        updateRefreshProgress(overlay, 100, '✅ Refresh complete!');
+        await sleep(500);
+        
+        // Force hard reload with cache bypass
+        // Add timestamp to force cache bust
+        const url = new URL(window.location.href);
+        url.searchParams.set('_t', Date.now());
+        
+        // Use location.replace for hard refresh
+        window.location.replace(url.toString());
+        
+    } catch (error) {
+        console.error('Force refresh failed:', error);
+        overlay.remove();
+        showToast('Force refresh failed. Using standard refresh...', 'warning');
+        window.location.reload();
+    }
+}
+
+// Create refresh overlay
+function createRefreshOverlay() {
+    const overlay = document.createElement('div');
+    overlay.className = 'reload-overlay';
+    overlay.style.zIndex = '999999';
+    overlay.innerHTML = `
+        <div class="reload-content">
+            <div class="reload-icon">
+                <i class="fas fa-bolt" style="color: #f59e0b; font-size: 4rem; animation: pulse 1s ease-in-out infinite;"></i>
+            </div>
+            <h2 class="reload-title">Force Refresh</h2>
+            <p class="reload-message">Clearing cache and reloading page...</p>
+            <div class="reload-progress-bar">
+                <div class="reload-progress-fill"></div>
+            </div>
+            <p class="reload-status">Initializing...</p>
+        </div>
+    `;
+    return overlay;
+}
+
+// Update refresh progress
+function updateRefreshProgress(overlay, percent, message) {
+    const progressFill = overlay.querySelector('.reload-progress-fill');
+    const statusText = overlay.querySelector('.reload-status');
+    
+    progressFill.style.width = percent + '%';
+    statusText.textContent = message;
+}
+
 // Check if data is loaded
 async function checkDataStatus() {
     try {
-        const response = await fetch('/api/check-data-status');
+        const response = await fetchWithCacheBust('/api/check-data-status');
         const result = await response.json();
         
         if (result.success) {
@@ -90,6 +239,12 @@ function initializeTabs() {
                     content.classList.add('active');
                 }
             });
+
+            // Scroll to top smoothly
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
         });
     });
 }
@@ -100,7 +255,7 @@ function initializeDataTabs() {
 
     dataTabs.forEach(btn => {
         btn.addEventListener('click', () => {
-            const tabName = btn.getAttribute('data-data-tab');
+            const tabName = btn.getAttribute('data-tab');
             
             // Update active states
             dataTabs.forEach(b => b.classList.remove('active'));
@@ -112,6 +267,28 @@ function initializeDataTabs() {
                     content.classList.add('active');
                 }
             });
+
+            // Display data for the selected tab from cache
+            switch(tabName) {
+                case 'courses-data':
+                    displayCoursesTable(allData.courses);
+                    break;
+                case 'instructors-data':
+                    displayInstructorsTable(allData.instructors);
+                    break;
+                case 'rooms-data':
+                    displayRoomsTable(allData.rooms);
+                    break;
+                case 'timeslots-data':
+                    displayTimeslotsTable(allData.timeslots);
+                    break;
+            }
+
+            // Scroll to the data section (not all the way to top since we're already in Data tab)
+            const dataSection = document.getElementById('data-management');
+            if (dataSection) {
+                dataSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
         });
     });
 }
@@ -212,7 +389,7 @@ async function loadDataSummary() {
             return;
         }
         
-        const response = await fetch('/api/data/summary');
+        const response = await fetchWithCacheBust('/api/data/summary');
         const data = await response.json();
         
         if (data.success) {
@@ -265,7 +442,7 @@ async function loadAllData() {
 async function loadCourses() {
     try {
         console.log('Loading courses...');
-        const response = await fetch('/api/courses');
+        const response = await fetchWithCacheBust('/api/courses');
         const data = await response.json();
         
         console.log('Courses response:', data);
@@ -289,7 +466,7 @@ async function loadCourses() {
 async function loadInstructors() {
     try {
         console.log('Loading instructors...');
-        const response = await fetch('/api/instructors');
+        const response = await fetchWithCacheBust('/api/instructors');
         const data = await response.json();
         
         console.log('Instructors response:', data);
@@ -313,7 +490,7 @@ async function loadInstructors() {
 async function loadRooms() {
     try {
         console.log('Loading rooms...');
-        const response = await fetch('/api/rooms');
+        const response = await fetchWithCacheBust('/api/rooms');
         const data = await response.json();
         
         console.log('Rooms response:', data);
@@ -337,7 +514,7 @@ async function loadRooms() {
 async function loadTimeslots() {
     try {
         console.log('Loading timeslots...');
-        const response = await fetch('/api/timeslots');
+        const response = await fetchWithCacheBust('/api/timeslots');
         const data = await response.json();
         
         console.log('Timeslots response:', data);
@@ -366,7 +543,7 @@ function displayCoursesTable(courses) {
     const tbody = document.getElementById('courses-table-body');
     
     if (courses.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="4" class="text-center">No courses found</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="5" class="text-center">No courses found</td></tr>';
         return;
     }
     
@@ -376,6 +553,14 @@ function displayCoursesTable(courses) {
             <td>${course.name}</td>
             <td>${course.credits}</td>
             <td><span class="course-type">${course.type}</span></td>
+            <td class="action-buttons">
+                <button class="btn-edit" onclick="editCourse('${course.course_id}', '${course.name}', '${course.credits}', '${course.type}')" title="Edit">
+                    <i class="fas fa-edit"></i>
+                </button>
+                <button class="btn-delete" onclick="deleteCourse('${course.course_id}')" title="Delete">
+                    <i class="fas fa-trash"></i>
+                </button>
+            </td>
         </tr>
     `).join('');
 }
@@ -384,26 +569,37 @@ function displayInstructorsTable(instructors) {
     const tbody = document.getElementById('instructors-table-body');
     
     if (instructors.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="5" class="text-center">No instructors found</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="6" class="text-center">No instructors found</td></tr>';
         return;
     }
     
-    tbody.innerHTML = instructors.map(instructor => `
+    tbody.innerHTML = instructors.map(instructor => {
+        const qualifiedCoursesStr = instructor.qualified_courses.join(',');
+        const preferredSlotsStr = instructor.preferred_slots ? instructor.preferred_slots.join(',') : '';
+        return `
         <tr>
             <td>${instructor.instructor_id}</td>
             <td>${instructor.name}</td>
             <td>${instructor.role}</td>
-            <td>${instructor.unavailable_day}</td>
+            <td>${instructor.unavailable_day || 'None'}</td>
             <td>${instructor.qualified_courses.slice(0, 5).join(', ')}${instructor.qualified_courses.length > 5 ? '...' : ''}</td>
+            <td class="action-buttons">
+                <button class="btn-edit" onclick="editInstructor('${instructor.instructor_id}', '${instructor.name}', '${instructor.role}', '${preferredSlotsStr}', '${qualifiedCoursesStr}')" title="Edit">
+                    <i class="fas fa-edit"></i>
+                </button>
+                <button class="btn-delete" onclick="deleteInstructor('${instructor.instructor_id}')" title="Delete">
+                    <i class="fas fa-trash"></i>
+                </button>
+            </td>
         </tr>
-    `).join('');
+    `}).join('');
 }
 
 function displayRoomsTable(rooms) {
     const tbody = document.getElementById('rooms-table-body');
     
     if (rooms.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="3" class="text-center">No rooms found</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="4" class="text-center">No rooms found</td></tr>';
         return;
     }
     
@@ -412,6 +608,14 @@ function displayRoomsTable(rooms) {
             <td>${room.room_id}</td>
             <td>${room.type}</td>
             <td>${room.capacity}</td>
+            <td class="action-buttons">
+                <button class="btn-edit" onclick="editRoom('${room.room_id}', '${room.type}', ${room.capacity})" title="Edit">
+                    <i class="fas fa-edit"></i>
+                </button>
+                <button class="btn-delete" onclick="deleteRoom('${room.room_id}')" title="Delete">
+                    <i class="fas fa-trash"></i>
+                </button>
+            </td>
         </tr>
     `).join('');
 }
@@ -420,7 +624,7 @@ function displayTimeslotsTable(timeslots) {
     const tbody = document.getElementById('timeslots-table-body');
     
     if (timeslots.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="3" class="text-center">No timeslots found</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="4" class="text-center">No timeslots found</td></tr>';
         return;
     }
     
@@ -429,8 +633,294 @@ function displayTimeslotsTable(timeslots) {
             <td>${slot.day}</td>
             <td>${slot.start_time}</td>
             <td>${slot.end_time}</td>
+            <td class="action-buttons">
+                <button class="btn-edit" onclick="editTimeslot('${slot.day}', '${slot.start_time}', '${slot.end_time}')" title="Edit">
+                    <i class="fas fa-edit"></i>
+                </button>
+                <button class="btn-delete" onclick="deleteTimeslot('${slot.day}', '${slot.start_time}')" title="Delete">
+                    <i class="fas fa-trash"></i>
+                </button>
+            </td>
         </tr>
     `).join('');
+}
+
+// ============================================================================
+// DELETE FUNCTIONS
+// ============================================================================
+
+async function deleteCourse(courseId) {
+    if (!confirm(`Are you sure you want to delete course ${courseId}?`)) {
+        return;
+    }
+
+    try {
+        const response = await fetchWithCacheBust(`/api/courses/${courseId}`, {
+            method: 'DELETE'
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+            showToast('Course deleted successfully', 'success');
+            await loadCourses();  // Reload courses from server
+            await loadDataSummary();  // Update the summary counts
+        } else {
+            showToast(data.error || 'Failed to delete course', 'error');
+        }
+    } catch (error) {
+        console.error('Error deleting course:', error);
+        showToast('Failed to delete course', 'error');
+    }
+}
+
+async function deleteInstructor(instructorId) {
+    if (!confirm(`Are you sure you want to delete instructor ${instructorId}?`)) {
+        return;
+    }
+
+    try {
+        const response = await fetchWithCacheBust(`/api/instructors/${instructorId}`, {
+            method: 'DELETE'
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+            showToast('Instructor deleted successfully', 'success');
+            await loadInstructors();  // Reload instructors from server
+            await loadDataSummary();  // Update the summary counts
+        } else {
+            showToast(data.error || 'Failed to delete instructor', 'error');
+        }
+    } catch (error) {
+        console.error('Error deleting instructor:', error);
+        showToast('Failed to delete instructor', 'error');
+    }
+}
+
+async function deleteRoom(roomId) {
+    if (!confirm(`Are you sure you want to delete room ${roomId}?`)) {
+        return;
+    }
+
+    try {
+        const response = await fetchWithCacheBust(`/api/rooms/${roomId}`, {
+            method: 'DELETE'
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+            showToast('Room deleted successfully', 'success');
+            await loadRooms();  // Reload rooms from server
+            await loadDataSummary();  // Update the summary counts
+        } else {
+            showToast(data.error || 'Failed to delete room', 'error');
+        }
+    } catch (error) {
+        console.error('Error deleting room:', error);
+        showToast('Failed to delete room', 'error');
+    }
+}
+
+async function deleteTimeslot(day, startTime) {
+    if (!confirm(`Are you sure you want to delete timeslot ${day} ${startTime}?`)) {
+        return;
+    }
+
+    try {
+        const response = await fetchWithCacheBust(`/api/timeslots/${encodeURIComponent(day)}/${encodeURIComponent(startTime)}`, {
+            method: 'DELETE'
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+            showToast('Timeslot deleted successfully', 'success');
+            await loadTimeslots();  // Reload timeslots from server
+            await loadDataSummary();  // Update the summary counts
+        } else {
+            showToast(data.error || 'Failed to delete timeslot', 'error');
+        }
+    } catch (error) {
+        console.error('Error deleting timeslot:', error);
+        showToast('Failed to delete timeslot', 'error');
+    }
+}
+
+// ============================================================================
+// EDIT FUNCTIONS
+// ============================================================================
+
+function editCourse(courseId, courseName, credits, courseType) {
+    const newName = prompt('Enter new course name:', courseName);
+    if (newName === null) return;
+    
+    const newCredits = prompt('Enter new credits:', credits);
+    if (newCredits === null) return;
+    
+    const newType = prompt('Enter new type (Lecture/Lab):', courseType);
+    if (newType === null) return;
+
+    updateCourse(courseId, newName, newCredits, newType);
+}
+
+async function updateCourse(courseId, courseName, credits, courseType) {
+    try {
+        const response = await fetchWithCacheBust(`/api/courses/${courseId}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                course_name: courseName,
+                credits: credits,
+                course_type: courseType
+            })
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+            showToast('Course updated successfully', 'success');
+            await loadCourses();  // Reload courses from server
+            await loadDataSummary();  // Update the summary counts
+        } else {
+            showToast(data.error || 'Failed to update course', 'error');
+        }
+    } catch (error) {
+        console.error('Error updating course:', error);
+        showToast('Failed to update course', 'error');
+    }
+}
+
+function editInstructor(instructorId, name, role, preferredSlots, qualifiedCourses) {
+    const newName = prompt('Enter new name:', name);
+    if (newName === null) return;
+    
+    const newRole = prompt('Enter new role:', role);
+    if (newRole === null) return;
+    
+    const newPreferredSlots = prompt('Enter new preferred slots (comma-separated):', preferredSlots);
+    if (newPreferredSlots === null) return;
+    
+    const newQualifiedCourses = prompt('Enter new qualified courses (comma-separated):', qualifiedCourses);
+    if (newQualifiedCourses === null) return;
+
+    updateInstructor(instructorId, newName, newRole, newPreferredSlots, newQualifiedCourses);
+}
+
+async function updateInstructor(instructorId, name, role, preferredSlots, qualifiedCourses) {
+    try {
+        const response = await fetchWithCacheBust(`/api/instructors/${instructorId}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                name: name,
+                role: role,
+                preferred_slots: preferredSlots,
+                qualified_courses: qualifiedCourses
+            })
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+            showToast('Instructor updated successfully', 'success');
+            await loadInstructors();  // Reload instructors from server
+            await loadDataSummary();  // Update the summary counts
+        } else {
+            showToast(data.error || 'Failed to update instructor', 'error');
+        }
+    } catch (error) {
+        console.error('Error updating instructor:', error);
+        showToast('Failed to update instructor', 'error');
+    }
+}
+
+function editRoom(roomId, roomType, capacity) {
+    const newType = prompt('Enter new room type (Lecture/Lab):', roomType);
+    if (newType === null) return;
+    
+    const newCapacity = prompt('Enter new capacity:', capacity);
+    if (newCapacity === null) return;
+
+    updateRoom(roomId, newType, parseInt(newCapacity));
+}
+
+async function updateRoom(roomId, roomType, capacity) {
+    try {
+        const response = await fetchWithCacheBust(`/api/rooms/${roomId}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                room_type: roomType,
+                capacity: capacity
+            })
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+            showToast('Room updated successfully', 'success');
+            await loadRooms();  // Reload rooms from server
+            await loadDataSummary();  // Update the summary counts
+        } else {
+            showToast(data.error || 'Failed to update room', 'error');
+        }
+    } catch (error) {
+        console.error('Error updating room:', error);
+        showToast('Failed to update room', 'error');
+    }
+}
+
+function editTimeslot(day, startTime, endTime) {
+    const newDay = prompt('Enter new day:', day);
+    if (newDay === null) return;
+    
+    const newStartTime = prompt('Enter new start time:', startTime);
+    if (newStartTime === null) return;
+    
+    const newEndTime = prompt('Enter new end time:', endTime);
+    if (newEndTime === null) return;
+
+    updateTimeslot(day, startTime, newDay, newStartTime, newEndTime);
+}
+
+async function updateTimeslot(oldDay, oldStartTime, newDay, newStartTime, newEndTime) {
+    try {
+        const response = await fetchWithCacheBust('/api/timeslots', {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                old_day: oldDay,
+                old_start_time: oldStartTime,
+                new_day: newDay,
+                new_start_time: newStartTime,
+                new_end_time: newEndTime
+            })
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+            showToast('Timeslot updated successfully', 'success');
+            await loadTimeslots();  // Reload timeslots from server
+            await loadDataSummary();  // Update the summary counts
+        } else {
+            showToast(data.error || 'Failed to update timeslot', 'error');
+        }
+    } catch (error) {
+        console.error('Error updating timeslot:', error);
+        showToast('Failed to update timeslot', 'error');
+    }
 }
 
 // ============================================================================
@@ -719,26 +1209,162 @@ function exportJSON() {
 
 async function reloadData() {
     try {
-        showToast('Reloading data...', 'info');
+        // Create impressive reload overlay
+        const overlay = createReloadOverlay();
+        document.body.appendChild(overlay);
         
+        // Clear browser cache
+        await clearBrowserCache();
+        
+        // Animate reload process
+        updateReloadProgress(overlay, 10, '🧹 Clearing cache...');
+        await sleep(500);
+        
+        updateReloadProgress(overlay, 30, '📡 Contacting server...');
         const response = await fetch('/api/reload', {
-            method: 'POST'
+            method: 'POST',
+            headers: {
+                'Cache-Control': 'no-cache, no-store, must-revalidate',
+                'Pragma': 'no-cache',
+                'Expires': '0'
+            }
         });
         
+        updateReloadProgress(overlay, 50, '📥 Fetching fresh data...');
         const data = await response.json();
         
         if (data.success) {
-            showToast('Data reloaded successfully!', 'success');
+            updateReloadProgress(overlay, 70, '🔄 Updating UI...');
+            
+            // Clear cached data
+            allData = {
+                courses: [],
+                instructors: [],
+                rooms: [],
+                timeslots: []
+            };
+            
+            // Mark as loaded
+            dataLoaded = true;
+            
             await checkDataStatus();
+            
+            updateReloadProgress(overlay, 80, '📊 Loading data summary...');
             await loadDataSummary();
+            
+            updateReloadProgress(overlay, 90, '📋 Loading all data...');
             await loadAllData();
+            
+            updateReloadProgress(overlay, 95, '🎨 Updating displays...');
             updateDataStatusCard();
+            updateUIBasedOnDataStatus();
+            
+            // Update all data tabs by calling load functions which also display
+            // The load functions will populate allData and call the display functions
+            // So no need to call display functions separately
+            
+            updateReloadProgress(overlay, 100, '✅ Reload complete!');
+            
+            // Success animation
+            const checkmark = overlay.querySelector('.reload-icon');
+            checkmark.innerHTML = '<i class="fas fa-check-circle" style="color: #4ade80; font-size: 4rem;"></i>';
+            
+            await sleep(800);
+            
+            // Remove overlay with fade out
+            overlay.style.opacity = '0';
+            setTimeout(() => overlay.remove(), 500);
+            
+            showToast(`✨ Data reloaded successfully! ${data.counts.courses} courses, ${data.counts.instructors} instructors loaded.`, 'success');
         } else {
+            updateReloadProgress(overlay, 100, '❌ Reload failed!');
+            setTimeout(() => overlay.remove(), 2000);
             showToast('Failed to reload data: ' + data.error, 'error');
         }
     } catch (error) {
+        console.error('Reload error:', error);
         showToast('Error: ' + error.message, 'error');
+        const overlay = document.querySelector('.reload-overlay');
+        if (overlay) overlay.remove();
     }
+}
+
+// Create impressive reload overlay
+function createReloadOverlay() {
+    const overlay = document.createElement('div');
+    overlay.className = 'reload-overlay';
+    overlay.innerHTML = `
+        <div class="reload-content">
+            <div class="reload-icon">
+                <i class="fas fa-sync-alt fa-spin" style="color: #667eea; font-size: 4rem;"></i>
+            </div>
+            <h2 class="reload-title">Reloading Data</h2>
+            <p class="reload-message">Please wait while we refresh everything...</p>
+            <div class="reload-progress-bar">
+                <div class="reload-progress-fill"></div>
+            </div>
+            <p class="reload-status">Initializing...</p>
+            <div class="reload-stats">
+                <div class="stat-item">
+                    <i class="fas fa-database"></i>
+                    <span>Clearing Cache</span>
+                </div>
+                <div class="stat-item">
+                    <i class="fas fa-cloud-download-alt"></i>
+                    <span>Fetching Data</span>
+                </div>
+                <div class="stat-item">
+                    <i class="fas fa-sync"></i>
+                    <span>Updating UI</span>
+                </div>
+            </div>
+        </div>
+    `;
+    return overlay;
+}
+
+// Update reload progress
+function updateReloadProgress(overlay, percent, message) {
+    const progressFill = overlay.querySelector('.reload-progress-fill');
+    const statusText = overlay.querySelector('.reload-status');
+    
+    progressFill.style.width = percent + '%';
+    statusText.textContent = message;
+    
+    // Animate stat items based on progress
+    const statItems = overlay.querySelectorAll('.stat-item');
+    if (percent >= 30) statItems[0]?.classList.add('active');
+    if (percent >= 60) statItems[1]?.classList.add('active');
+    if (percent >= 90) statItems[2]?.classList.add('active');
+}
+
+// Clear browser cache
+async function clearBrowserCache() {
+    try {
+        // Clear Service Worker cache if available
+        if ('caches' in window) {
+            const cacheNames = await caches.keys();
+            await Promise.all(
+                cacheNames.map(cacheName => caches.delete(cacheName))
+            );
+            console.log('✅ Service Worker caches cleared');
+        }
+        
+        // Clear sessionStorage
+        sessionStorage.clear();
+        console.log('✅ Session storage cleared');
+        
+        // Note: localStorage is preserved (contains user preferences)
+        
+        console.log('✅ Browser cache cleared successfully');
+    } catch (error) {
+        console.warn('⚠️ Cache clearing failed:', error);
+    }
+}
+
+// Utility sleep function
+function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
 }
 
 // Update data status card in Data Management tab
@@ -854,13 +1480,32 @@ async function handleModalUpload() {
             dataLoaded = true;
             progressText.textContent = `✅ Success! Loaded ${result.counts.courses} courses, ${result.counts.instructors} instructors, ${result.counts.rooms} rooms, ${result.counts.timeslots} timeslots`;
             
-            showToast('Files uploaded successfully!', 'success');
+            showToast('Files uploaded successfully! Refreshing data...', 'success');
             
-            // Update UI
+            // Clear any cached data
+            allData = {
+                courses: [],
+                instructors: [],
+                rooms: [],
+                timeslots: []
+            };
+            
+            // Force update UI state
             updateUIBasedOnDataStatus();
+            
+            // Wait a bit for backend to process
+            await sleep(500);
+            
+            // Reload everything with cache busting
+            await checkDataStatus();
             await loadDataSummary();
             await loadAllData();
             updateDataStatusCard();
+            
+            // loadAllData() already calls the display functions for each data type
+            // So data will be displayed in the Data Management tabs automatically
+            
+            progressText.textContent = `✅ Complete! All data loaded and displayed successfully.`;
             
             // Close modal after 2 seconds
             setTimeout(() => {

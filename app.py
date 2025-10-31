@@ -67,15 +67,26 @@ def check_data_status():
     """Check if data has been loaded"""
     global data_loaded
     try:
+        # Only get counts if data is actually loaded
+        if data_loaded:
+            counts = {
+                'courses': len(data_loader.get_courses()),
+                'instructors': len(data_loader.get_instructors()),
+                'rooms': len(data_loader.get_rooms()),
+                'timeslots': len(data_loader.get_timeslots())
+            }
+        else:
+            counts = {
+                'courses': 0,
+                'instructors': 0,
+                'rooms': 0,
+                'timeslots': 0
+            }
+        
         return jsonify({
             'success': True,
             'data_loaded': data_loaded,
-            'counts': {
-                'courses': len(data_loader.get_courses()) if data_loaded else 0,
-                'instructors': len(data_loader.get_instructors()) if data_loaded else 0,
-                'rooms': len(data_loader.get_rooms()) if data_loaded else 0,
-                'timeslots': len(data_loader.get_timeslots()) if data_loaded else 0
-            }
+            'counts': counts
         })
     except Exception as e:
         return jsonify({'success': False, 'error': str(e)}), 500
@@ -204,6 +215,175 @@ def get_timeslots():
             'success': True,
             'timeslots': [t.to_dict() for t in timeslots]
         })
+    except Exception as e:
+        return jsonify({'success': False, 'error': str(e)}), 500
+
+# ============================================================================
+# DELETE ENDPOINTS
+# ============================================================================
+
+@app.route('/api/courses/<course_id>', methods=['DELETE'])
+def delete_course(course_id):
+    """Delete a course by ID"""
+    global data_loaded
+    try:
+        if not data_loaded:
+            return jsonify({'success': False, 'error': 'No data loaded'}), 400
+        
+        success = data_loader.delete_course(course_id)
+        if success:
+            return jsonify({'success': True, 'message': f'Course {course_id} deleted successfully'})
+        else:
+            return jsonify({'success': False, 'error': 'Failed to delete course'}), 500
+    except Exception as e:
+        return jsonify({'success': False, 'error': str(e)}), 500
+
+@app.route('/api/instructors/<instructor_id>', methods=['DELETE'])
+def delete_instructor(instructor_id):
+    """Delete an instructor by ID"""
+    global data_loaded
+    try:
+        if not data_loaded:
+            return jsonify({'success': False, 'error': 'No data loaded'}), 400
+        
+        success = data_loader.delete_instructor(instructor_id)
+        if success:
+            return jsonify({'success': True, 'message': f'Instructor {instructor_id} deleted successfully'})
+        else:
+            return jsonify({'success': False, 'error': 'Failed to delete instructor'}), 500
+    except Exception as e:
+        return jsonify({'success': False, 'error': str(e)}), 500
+
+@app.route('/api/rooms/<room_id>', methods=['DELETE'])
+def delete_room(room_id):
+    """Delete a room by ID"""
+    global data_loaded
+    try:
+        if not data_loaded:
+            return jsonify({'success': False, 'error': 'No data loaded'}), 400
+        
+        success = data_loader.delete_room(room_id)
+        if success:
+            return jsonify({'success': True, 'message': f'Room {room_id} deleted successfully'})
+        else:
+            return jsonify({'success': False, 'error': 'Failed to delete room'}), 500
+    except Exception as e:
+        return jsonify({'success': False, 'error': str(e)}), 500
+
+@app.route('/api/timeslots/<day>/<start_time>', methods=['DELETE'])
+def delete_timeslot(day, start_time):
+    """Delete a timeslot by day and start time"""
+    global data_loaded
+    try:
+        if not data_loaded:
+            return jsonify({'success': False, 'error': 'No data loaded'}), 400
+        
+        # URL decode the start_time (in case it contains special characters like :)
+        from urllib.parse import unquote
+        start_time = unquote(start_time)
+        
+        success = data_loader.delete_timeslot(day, start_time)
+        if success:
+            return jsonify({'success': True, 'message': f'Timeslot {day} {start_time} deleted successfully'})
+        else:
+            return jsonify({'success': False, 'error': 'Failed to delete timeslot'}), 500
+    except Exception as e:
+        return jsonify({'success': False, 'error': str(e)}), 500
+
+# ============================================================================
+# UPDATE ENDPOINTS
+# ============================================================================
+
+@app.route('/api/courses/<course_id>', methods=['PUT'])
+def update_course(course_id):
+    """Update a course"""
+    global data_loaded
+    try:
+        if not data_loaded:
+            return jsonify({'success': False, 'error': 'No data loaded'}), 400
+        
+        data = request.get_json()
+        success = data_loader.update_course(
+            course_id,
+            data.get('course_name'),
+            data.get('credits'),
+            data.get('course_type')
+        )
+        
+        if success:
+            return jsonify({'success': True, 'message': f'Course {course_id} updated successfully'})
+        else:
+            return jsonify({'success': False, 'error': 'Failed to update course'}), 500
+    except Exception as e:
+        return jsonify({'success': False, 'error': str(e)}), 500
+
+@app.route('/api/instructors/<instructor_id>', methods=['PUT'])
+def update_instructor(instructor_id):
+    """Update an instructor"""
+    global data_loaded
+    try:
+        if not data_loaded:
+            return jsonify({'success': False, 'error': 'No data loaded'}), 400
+        
+        data = request.get_json()
+        success = data_loader.update_instructor(
+            instructor_id,
+            data.get('name'),
+            data.get('role'),
+            data.get('preferred_slots'),
+            data.get('qualified_courses')
+        )
+        
+        if success:
+            return jsonify({'success': True, 'message': f'Instructor {instructor_id} updated successfully'})
+        else:
+            return jsonify({'success': False, 'error': 'Failed to update instructor'}), 500
+    except Exception as e:
+        return jsonify({'success': False, 'error': str(e)}), 500
+
+@app.route('/api/rooms/<room_id>', methods=['PUT'])
+def update_room(room_id):
+    """Update a room"""
+    global data_loaded
+    try:
+        if not data_loaded:
+            return jsonify({'success': False, 'error': 'No data loaded'}), 400
+        
+        data = request.get_json()
+        success = data_loader.update_room(
+            room_id,
+            data.get('room_type'),
+            int(data.get('capacity'))
+        )
+        
+        if success:
+            return jsonify({'success': True, 'message': f'Room {room_id} updated successfully'})
+        else:
+            return jsonify({'success': False, 'error': 'Failed to update room'}), 500
+    except Exception as e:
+        return jsonify({'success': False, 'error': str(e)}), 500
+
+@app.route('/api/timeslots', methods=['PUT'])
+def update_timeslot():
+    """Update a timeslot"""
+    global data_loaded
+    try:
+        if not data_loaded:
+            return jsonify({'success': False, 'error': 'No data loaded'}), 400
+        
+        data = request.get_json()
+        success = data_loader.update_timeslot(
+            data.get('old_day'),
+            data.get('old_start_time'),
+            data.get('new_day'),
+            data.get('new_start_time'),
+            data.get('new_end_time')
+        )
+        
+        if success:
+            return jsonify({'success': True, 'message': 'Timeslot updated successfully'})
+        else:
+            return jsonify({'success': False, 'error': 'Failed to update timeslot'}), 500
     except Exception as e:
         return jsonify({'success': False, 'error': str(e)}), 500
 
@@ -403,58 +583,75 @@ def add_course():
         new_course = Course(data['course_id'], data['name'], data['credits'], data['type'])
         data_loader.courses.append(new_course)
         
-        # Save to CSV
-        save_courses_to_csv()
+        # Save to CSV using data_loader method
+        data_loader.save_courses_to_csv()
         
         return jsonify({'success': True, 'message': 'Course added successfully'})
     except Exception as e:
         return jsonify({'success': False, 'error': str(e)}), 500
 
-@app.route('/api/courses/delete/<course_id>', methods=['DELETE'])
-def delete_course(course_id):
-    """Delete a course"""
-    try:
-        original_count = len(data_loader.courses)
-        data_loader.courses = [c for c in data_loader.courses if c.course_id != course_id]
-        
-        if len(data_loader.courses) == original_count:
-            return jsonify({'success': False, 'error': 'Course not found'}), 404
-        
-        # Save to CSV
-        save_courses_to_csv()
-        
-        return jsonify({'success': True, 'message': 'Course deleted successfully'})
-    except Exception as e:
-        return jsonify({'success': False, 'error': str(e)}), 500
-
 @app.route('/api/reload', methods=['POST'])
 def reload_data():
-    """Reload all data from CSV files"""
+    """Reload all data from CSV files (from uploads folder if available, otherwise from root)"""
+    global data_loaded
     try:
-        success = initialize_data()
-        if success:
-            return jsonify({'success': True, 'message': 'Data reloaded successfully'})
-        else:
-            return jsonify({'success': False, 'error': 'Failed to reload data'}), 500
+        # Try to load from uploads folder first (user uploaded files)
+        upload_files = [
+            os.path.join(UPLOAD_FOLDER, 'Courses.csv'),
+            os.path.join(UPLOAD_FOLDER, 'instructors.csv'),
+            os.path.join(UPLOAD_FOLDER, 'Rooms.csv'),
+            os.path.join(UPLOAD_FOLDER, 'TimeSlots.csv')
+        ]
+        
+        # Check if uploaded files exist
+        if all(os.path.exists(f) for f in upload_files):
+            data_loader.load_all_data(
+                upload_files[0],
+                upload_files[1],
+                upload_files[2],
+                upload_files[3]
+            )
+            data_loaded = True
+            return jsonify({
+                'success': True, 
+                'message': 'Data reloaded successfully from uploaded files',
+                'counts': {
+                    'courses': len(data_loader.get_courses()),
+                    'instructors': len(data_loader.get_instructors()),
+                    'rooms': len(data_loader.get_rooms()),
+                    'timeslots': len(data_loader.get_timeslots())
+                }
+            })
+        
+        # Fallback to root folder CSV files
+        root_files = ['Courses.csv', 'instructors.csv', 'Rooms.csv', 'TimeSlots.csv']
+        if all(os.path.exists(f) for f in root_files):
+            data_loader.load_all_data(
+                root_files[0],
+                root_files[1],
+                root_files[2],
+                root_files[3]
+            )
+            data_loaded = True
+            return jsonify({
+                'success': True, 
+                'message': 'Data reloaded successfully from default files',
+                'counts': {
+                    'courses': len(data_loader.get_courses()),
+                    'instructors': len(data_loader.get_instructors()),
+                    'rooms': len(data_loader.get_rooms()),
+                    'timeslots': len(data_loader.get_timeslots())
+                }
+            })
+        
+        # No data files found
+        data_loaded = False
+        return jsonify({'success': False, 'error': 'No CSV files found. Please upload data first.'}), 404
+        
     except Exception as e:
+        print(f"Error reloading data: {e}")
+        data_loaded = False
         return jsonify({'success': False, 'error': str(e)}), 500
-
-# ============================================================================
-# HELPER FUNCTIONS
-# ============================================================================
-
-def save_courses_to_csv():
-    """Save courses to CSV file"""
-    try:
-        with open('Courses.csv', 'w', newline='', encoding='utf-8') as f:
-            writer = csv.writer(f)
-            writer.writerow(['CourseID', 'CourseName', 'Credits', 'Type'])
-            for course in data_loader.courses:
-                writer.writerow([course.course_id, course.name, course.credits, course.type])
-        return True
-    except Exception as e:
-        print(f"Error saving courses: {e}")
-        return False
 
 # ============================================================================
 # ERROR HANDLERS

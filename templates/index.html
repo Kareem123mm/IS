@@ -32,6 +32,11 @@
                         <i class="fas fa-chart-bar"></i> Statistics
                     </button>
                 </nav>
+                <div class="header-actions">
+                    <button class="btn-icon" onclick="forceRefreshPage()" title="Force Refresh (Ctrl+Shift+R)">
+                        <i class="fas fa-sync-alt"></i>
+                    </button>
+                </div>
             </div>
         </div>
     </header>
@@ -225,8 +230,11 @@
                         <button class="btn btn-success" onclick="showUploadModal()">
                             <i class="fas fa-upload"></i> Upload New Data
                         </button>
-                        <button class="btn btn-primary" onclick="reloadData()">
+                        <button class="btn btn-primary reload-btn" onclick="reloadData()">
                             <i class="fas fa-sync-alt"></i> Reload Data
+                        </button>
+                        <button class="btn btn-secondary" onclick="forceRefreshPage()" title="Clear cache and refresh">
+                            <i class="fas fa-bolt"></i> Force Refresh
                         </button>
                     </div>
                 </div>
@@ -280,10 +288,11 @@
                                     <th>Course Name</th>
                                     <th>Credits</th>
                                     <th>Type</th>
+                                    <th>Actions</th>
                                 </tr>
                             </thead>
                             <tbody id="courses-table-body">
-                                <tr><td colspan="4" class="loading">Loading...</td></tr>
+                                <tr><td colspan="5" class="loading">Loading...</td></tr>
                             </tbody>
                         </table>
                     </div>
@@ -299,10 +308,11 @@
                                     <th>Role</th>
                                     <th>Unavailable Day</th>
                                     <th>Qualified Courses</th>
+                                    <th>Actions</th>
                                 </tr>
                             </thead>
                             <tbody id="instructors-table-body">
-                                <tr><td colspan="5" class="loading">Loading...</td></tr>
+                                <tr><td colspan="6" class="loading">Loading...</td></tr>
                             </tbody>
                         </table>
                     </div>
@@ -316,10 +326,11 @@
                                     <th>Room ID</th>
                                     <th>Type</th>
                                     <th>Capacity</th>
+                                    <th>Actions</th>
                                 </tr>
                             </thead>
                             <tbody id="rooms-table-body">
-                                <tr><td colspan="3" class="loading">Loading...</td></tr>
+                                <tr><td colspan="4" class="loading">Loading...</td></tr>
                             </tbody>
                         </table>
                     </div>
@@ -333,10 +344,11 @@
                                     <th>Day</th>
                                     <th>Start Time</th>
                                     <th>End Time</th>
+                                    <th>Actions</th>
                                 </tr>
                             </thead>
                             <tbody id="timeslots-table-body">
-                                <tr><td colspan="3" class="loading">Loading...</td></tr>
+                                <tr><td colspan="4" class="loading">Loading...</td></tr>
                             </tbody>
                         </table>
                     </div>
