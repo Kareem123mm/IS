@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # 🎓 CSP TimetableAI - Intelligent Scheduling System
 
 <div align="center">
@@ -473,3 +474,6 @@ This software is protected by copyright law. Unauthorized copying, distribution,
 ---
 
 </div>
+=======
+# IS
+>>>>>>> 5d681e0619e5d2f1f8584b4d77e2a0c78e804b6e
