@@ -1,0 +1,48 @@
+InstructorID,Name,Role,PreferredSlots,QualifiedCourses
+INS001,Prof. Mostafa Soliman,Professor,Not on Friday,"CSC111,CSC112,CSC113,CSC122,CSC316,LRA105,LRA106,LRA202,LRA208,LRA304,LRA405,LRA407"
+INS002,Dr. Reda Elbasiony,Doctor,Not on Thursday,"CSC121,CSC112"
+INS003,Dr. Ahmed Arafa,Doctor,Not on Monday,"AID413,MTH111"
+INS004,Dr. Adel Fathy,Doctor,Not on Tuesday,"PHY113,PHY123"
+INS005,Dr. Ayman Arafa,Doctor,Not on Wednesday,"ACM215,MTH121"
+INS006,Prof. Ahmed Zakaria,Professor,Not on Thursday,"ACM323,ACM422,MTH212"
+INS007,Dr. Ahmed Anter,Doctor,Not on Friday,"AID221,AID311,CNC111"
+INS008,Dr. Ahmed Bayumi,Doctor,Not on Monday,"AID312,AID428"
+INS009,Dr. Hataba,Doctor,Not on Tuesday,CSC221
+INS010,Dr. Sameh Shreif,Doctor,Not on Wednesday,ECE213
+INS011,Dr. Mustafa AlSayed,Doctor,Not on Thursday,CSC211
+INS012,Prof. Ahmed Allam,Professor,Not on Friday,"CSE214,CSE312,CSE423,ECE111,ECE214"
+INS013,Prof. Samir Ahmed,Professor,Not on Monday,"CNC222,CNC311,CNC314"
+INS014,Dr. Mohamed Issa,Doctor,Not on Tuesday,AID417
+INS015,Prof. Marghany Hassan,Professor,Not on Wednesday,"AID111,AID321,AID322,AID323,AID324,AID325,AID326,AID327,AID328,AID411,AID412,AID414,AID416,AID421,AID422,AID423,AID424,AID425,AID426,AID427,CSC114"
+INS016,Dr. Sherine Elmotasem,Doctor,Not on Thursday,"LRA101,LRA102,LRA103"
+INS017,Prof. LBA,Professor,Not on Friday,"LRA104,LRA107,LRA108,LRA204,LRA205,LRA206,LRA305,LRA306,LRA401,LRA402,LRA403,LRA406,LRA410"
+INS018,Dr. Reda,Doctor,Not on Monday,
+INS019,Prof. Eman Allam,Professor,Not on Tuesday,"BIO111,LRA109,LRA110,LRA201,LRA203,LRA207,LRA302,LRA303,LRA404,LRA408,LRA409,LRA411"
+INS020,Dr. Mohamed Akhames,Doctor,Not on Wednesday,
+INS021,Dr. Mohamed Khames,Doctor,Not on Thursday,
+INS022,Dr. Ahmed Abdel-Malk,Doctor,Not on Friday,ECE223
+INS023,Eng. Omnya Shehata,Teaching Assistant,Not on Monday,"MTH111,PHY113,CSC111,AID321"
+INS024,Eng. Nouran Moussa,Teaching Assistant,Not on Tuesday,"MTH121,PHY123,CSC121,AID322"
+INS025,Eng. Zeina Ahmed,Teaching Assistant,Not on Wednesday,"CSE312,MTH212,BIO111,AID323"
+INS026,Eng. Nada Essam,Teaching Assistant,Not on Thursday,"ACM215,CHM113,CSC122,AID311"
+INS027,Eng. Nour Akram,Teaching Assistant,Not on Friday,"ACM323,ECE223,CSC211,AID324"
+INS028,Eng. Mariem Nagy,Teaching Assistant,Not on Monday,"MTH111,ACM422,AID411,AID412"
+INS029,Eng. Mariam Ismael,Teaching Assistant,Not on Tuesday,"PHY113,MTH121,AID421,AID422"
+INS030,Eng. Zeina Shreif,Teaching Assistant,Not on Wednesday,"BIO111,PHY123,AID413,AID416"
+INS031,Eng. Menna Magdy,Teaching Assistant,Not on Thursday,"CSC111,CHM113,AID426,AID428"
+INS032,Eng. Sama Osama,Teaching Assistant,Not on Friday,"MTH212,CSC121,AID326,AID327"
+INS033,Eng. Aya Tarek,Teaching Assistant,Not on Monday,"CSE312,ACM215,AID417,AID425"
+INS034,Eng. Nada Ahmed,Teaching Assistant,Not on Tuesday,"ECE223,CSC122,AID325,AID414"
+INS035,Eng. Salma Waleed,Teaching Assistant,Not on Wednesday,"MTH111,CSC211,AID424,AID423"
+INS036,Eng. Nourhan Waleed,Teaching Assistant,Not on Thursday,"PHY113,ACM323,AID321,AID328"
+INS037,Eng. Salma Alashry,Teaching Assistant,Not on Friday,"MTH121,ACM422,AID322,AID311"
+INS038,Eng. Heba Abdelkader,Teaching Assistant,Not on Monday,"BIO111,PHY123,AID323,AID324"
+INS039,Eng. Omnya Ramadan,Teaching Assistant,Not on Tuesday,"CHM113,CSC111,AID411,AID412,CSC112"
+INS040,Eng. Nada Hamdy,Teaching Assistant,Not on Wednesday,"MTH212,CSC121,AID421,AID413"
+INS041,Eng. Fatma Elsayed,Teaching Assistant,Not on Thursday,"CSE312,CSC122,AID416,AID426"
+INS042,Eng. Menna Hamdi,Teaching Assistant,Not on Friday,"ACM215,CSC211,AID422,AID428"
+INS043,Eng. Heba,Teaching Assistant,Not on Monday,"ECE223,MTH111,AID326,AID327"
+INS044,Eng. ECE Lab Assistant,Teaching Assistant,Not on Tuesday,"ECE223,PHY113,PHY123,AID417"
+INS045,Eng. BAS Lab Assistant,Teaching Assistant,Not on Wednesday,"CHM113,BIO111,MTH111,MTH121"
+INS046,Eng. ECE,Teaching Assistant,Any,"ECE223,CSC111,CSC121,CSC122"
+INS047,Eng. BAS,Teaching Assistant,Any,"CHM113,BIO111,PHY113,MTH212"
