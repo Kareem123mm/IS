@@ -1,5 +1,3 @@
-# 🎓 CSP TimetableAI - Intelligent Scheduling System<<<<<<< HEAD
-
 # 🎓 CSP TimetableAI - Intelligent Scheduling System
 
 <div align="center">
