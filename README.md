@@ -20,15 +20,12 @@
 
 
 
-</div>**© 2025 Kareem. All Rights Reserved.**
-
-
 
 ---</div>
 
 
 
-## 📋 Table of Contents---
+## 📋 Table of Contents
 
 
 
@@ -54,11 +51,11 @@
 
 - [Performance](#-performance)
 
----- [Troubleshooting](#-troubleshooting)
+- [Troubleshooting](#-troubleshooting)
 
 
 
-## 🎯 Overview---
+## 🎯 Overview
 
 
 
@@ -84,11 +81,11 @@
 
 ✅ **Flexible**: Easy data management through CSV files  
 
----✅ **Professional**: Export timetables as PDF or JSON
+✅ **Professional**: Export timetables as PDF or JSON
 
 
 
-## ⭐ Key Features---
+## ⭐ Key Features
 
 
 
