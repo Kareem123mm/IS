@@ -3,7 +3,6 @@
 
 <div align="center">
 
-**An intelligent university timetable scheduling system powered by AI algorithms**
 
 **An intelligent university timetable scheduling system powered by AI algorithms**
 
@@ -16,8 +15,6 @@
 [![License](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
 **© 2025 Kareem. All Rights Reserved.**[![Status](https://img.shields.io/badge/Status-Production-success.svg)]()
-
-
 
 
 </div>
