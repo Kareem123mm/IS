@@ -29,21 +29,21 @@
 
 - [Key Features](#-key-features)
 
-- [Quick Start](#-quick-start)- [Overview](#-overview)
+- [Quick Start](#-quick-start)
 
-- [System Requirements](#-system-requirements)- [Key Features](#-key-features)
+- [System Requirements](#-system-requirements)
 
-- [Installation](#-installation)- [Quick Start](#-quick-start)
+- [Installation](#-installation)
 
-- [Usage Guide](#-usage-guide)- [System Requirements](#-system-requirements)
+- [Usage Guide](#-usage-guide)
 
-- [Project Structure](#-project-structure)- [Installation](#-installation)
+- [Project Structure](#-project-structure)
 
-- [Documentation](#-documentation)- [Usage Guide](#-usage-guide)
+- [Documentation](#-documentation)
 
-- [Performance](#-performance)- [Project Structure](#-project-structure)
+- [Performance](#-performance)
 
-- [Troubleshooting](#-troubleshooting)- [Documentation](#-documentation)
+- [Troubleshooting](#-troubleshooting)
 
 - [Performance](#-performance)
 
