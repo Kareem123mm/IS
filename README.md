@@ -14,7 +14,7 @@
 
 [![License](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
-**© 2025 Kareem. All Rights Reserved.**[![Status](https://img.shields.io/badge/Status-Production-success.svg)]()
+**© 2025 Kareem. All Rights Reserved.
 
 
 </div>
